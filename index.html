@@ -1,0 +1,108 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><link rel="icon" href="data:">
+<title>ウェイスト計算機</title>
+</head><body>
+<h1>ウェイスト計算機</h1>
+<table>
+<tr><th>汚れているプラスチック・紙類・木材</th><td><input type=number id=w1>g</td><td id=c1></td></tr>
+<tr><th>飲料ボトル</th><td><input type=number id=w2>g</td><td id=c2></td></tr>
+<tr><th>どうしても燃やさなければならないもの</th><td><input type=number id=w3>g</td><td id=c3></td></tr>
+<tr><th>きれいなプラスチック容器包装</th><td><input type=number id=w4>g</td><td id=c4></td></tr>
+<tr><th>紙類・金属類</th><td><input type=number id=w5>g</td><td id=c5></td></tr>
+<tr><th>生ゴミ</th><td><input type=number id=w6>g</td><td id=c6></td></tr>
+<tr class=sum><th>合計</th><td id=sum1></td><td id=sum2></td></tr>
+</table>
+
+<hr>
+<footer>
+各項目を、徳島県上勝町の45分別から、<br>
+「汚れているプラスチック・紙類・木材」を「その他のプラスチック」<br>
+「飲料ボトル」を「透明びん」<br>
+「きれいなプラスチック容器包装」を「プラスチック製容器包装」<br>
+「紙類・金属類」を「雑誌雑紙」<br>
+として、それぞれ2024-03-31時点の単価で計算したものです。<br>
+</footer>
+<br>
+DATA: <a href=https://github.com/code4fukui/zerowaste/>徳島県上勝町リサイクル分別オープンデータ</a><br>
+APP: <a href=https://github.com/code4fukui/wastecalc/>src on GitHub by Code for FUKUI</a><br>
+関連: <a href=https://code4fukui.github.io/become-money/>クイズ お金になる？</a><br>
+
+
+<script type="module">
+import { CSV } from "https://js.sabae.cc/CSV.js";
+
+const url = "https://code4fukui.github.io/zerowaste/zerowaste_kamikatsu.csv";
+const data = await CSV.fetchJSON(url);
+
+const names = [
+  "その他のプラスチック",
+  "透明びん",
+  "どうしても燃やさなければならないもの",
+  "プラスチック製容器包装",
+  "雑誌雑紙",
+  "生ごみ",
+];
+
+const calc = () => {
+  let sumw = 0;
+  let summ = 0;
+  for (let i = 1; i <= 6; i++) {
+    const res = document.getElementById("c" + i);
+    const val = parseFloat(document.getElementById("w" + i).value);
+    if (!isNaN(val)) sumw += val;
+    const name = names[i - 1];
+    const waste = data.find(i => i.品目 == name);
+    if (waste.持ち込み可能 == "0") {
+      res.textContent = "持ち込み不可";
+    } else if (waste.住民負担 == "1") {
+      res.textContent = "住民負担";
+    } else {
+      if (isNaN(val)) {
+        res.textContent = "";
+      } else {
+        const minus = waste.町負担 == 1;
+        const unit = parseFloat(waste.kg単価);
+        if (!unit) {
+          res.textContent = "?";
+        } else {
+          const yen = val * unit / 1000 * (minus ? -1 : 1);
+          res.textContent = yen.toFixed(2) + "円";
+          summ += yen;
+        }
+      }
+    }
+    sum1.textContent = sumw + "g";
+    sum2.textContent = summ.toFixed(2) + "円";
+  }
+};
+for (let i = 1; i <= 6; i++) {
+  document.getElementById("w" + i).oninput = calc;
+}
+calc();
+
+</script>
+
+<style>
+th {
+  text-align: left;
+}
+td {
+  text-align: right;
+  white-space: nowrap;
+}
+input[type=number] {
+  width: 4em;
+  font-size: 16px;
+  margin: .1em .3em;
+  padding: .1em .3em;
+  text-align: right;
+}
+.sum > * {
+  border-top: 1px solid black;
+}
+hr {
+  margin-top: 1.5em;
+}
+footer {
+  font-size: 90%;
+}
+</style>
