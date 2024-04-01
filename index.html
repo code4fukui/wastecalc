@@ -10,6 +10,9 @@
 <tr><th>紙類・金属類</th><td><input type=number id=w5>g</td><td id=c5></td></tr>
 <tr><th>生ゴミ</th><td><input type=number id=w6>g</td><td id=c6></td></tr>
 <tr class=sum><th>合計</th><td id=sum1></td><td id=sum2></td></tr>
+<tr><th>すべて燃やすと？</th><td></td><td id=sum2a></td></tr>
+<tr><th>お得</th><td></td><td id=sum2b></td></tr>
+<tr><th>お得（年間、365日）</th><td></td><td id=sum2c></td></tr>
 </table>
 
 <hr>
@@ -29,6 +32,7 @@ APP: <a href=https://github.com/code4fukui/wastecalc/>src on GitHub by Code for 
 
 <script type="module">
 import { CSV } from "https://js.sabae.cc/CSV.js";
+import { addComma } from "https://js.sabae.cc/addComma.js";
 
 const url = "https://code4fukui.github.io/zerowaste/zerowaste_kamikatsu.csv";
 const data = await CSV.fetchJSON(url);
@@ -70,8 +74,16 @@ const calc = () => {
         }
       }
     }
+    const wval = parseFloat(data.find(i => i.品目 == "どうしても燃やさなければならないもの").kg単価);
+    const sumw2a = -sumw * wval / 1000;
+    const sumw2d = summ - sumw2a;
+    const sumw2c = (summ - sumw2a) * 365;
+    //console.log(sumw, summ, sum2, sum2d, sumw);
     sum1.textContent = sumw + "g";
     sum2.textContent = summ.toFixed(2) + "円";
+    sum2a.textContent = sumw2a.toFixed(2) + "円";
+    sum2b.textContent = sumw2d.toFixed(2) + "円";
+    sum2c.textContent = addComma(sumw2c.toFixed(0)) + "円";
   }
 };
 for (let i = 1; i <= 6; i++) {
@@ -82,6 +94,9 @@ calc();
 </script>
 
 <style>
+body {
+  font-family: sans-serif;
+}
 th {
   text-align: left;
 }
