@@ -1,25 +1,34 @@
 # wastecalc
-日本語のREADMEはこちらです: [README.ja.md](README.ja.md)
 
-A waste calculator for estimating the cost of waste disposal.
+ウェイスト計算機
 
-## Demo
-The calculator is available at https://code4fukui.github.io/wastecalc/
+**Live demo**: https://code4fukui.github.io/wastecalc/
 
 ## Features
-- Calculates the cost of waste disposal for various waste categories
-- Provides the total cost and cost per year
-- Utilizes open data on waste disposal fees from Kamikatsu Town, Tokushima Prefecture
 
-## Requirements
-None. The calculator runs in the browser.
+- CSV data parsing
 
-## Usage
-1. Enter the weight of each waste category.
-2. The calculator will display the estimated cost for each category and the total cost.
+## Technology Stack
 
-## Data / API
-The calculator uses open data on waste disposal fees from Kamikatsu Town, Tokushima Prefecture, available at https://github.com/code4fukui/zerowaste/
+**Browser modules (ES imports):**
+
+- [`CSV.js`](https://js.sabae.cc/CSV.js)
+- [`addComma.js`](https://js.sabae.cc/addComma.js)
+
+
+## Installation & Setup
+
+No build step required. Clone the repository and open `index.html` in a browser,
+or visit the live demo at https://code4fukui.github.io/wastecalc/
+
+## Data Sources
+
+- DATA: 徳島県上勝町リサイクル分別オープンデータ
+
+## Contributing
+
+Contributions are welcome. Please open an issue or pull request on GitHub.
 
 ## License
-This project is licensed under the [MIT License](LICENSE).
+
+MIT License. See [LICENSE](./LICENSE) for details.
